@@ -1,0 +1,636 @@
+Enter password: ******
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 44
+Server version: 8.0.26 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use sunlifedb
+Database changed
+mysql> create database vehicledb
+    -> ;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> use vehicledb;
+Database changed
+mysql>
+mysql>
+mysql> create table vehicletype(
+    -> vehicletypeid int,
+    -> vehiclename varchar(20),
+    -> primary key(vehicletypeid));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table vehicle(
+    -> regno varchar(20),
+    -> manufacturer varchar(30),
+    -> dailyrent decimal,
+    -> mileage decimal,
+    -> description varchar(200),
+    -> vehicletypeid int,
+    -> fueltypeid int,
+    -> primary key(regno),
+    -> foreign key(vehicletypeid) references vehicletype(vehicletypeid));
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> create table fueltype(
+    -> fueltypeid int,
+    -> fuelname varchar(20),
+    -> primary key(fueltypeid));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> alter table vehicle add cosntraint fk foreign key(fueltypeid) references fueltype(fueltypeid);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'fk foreign key(fueltypeid) references fueltype(fueltypeid)' at line 1
+mysql> alter table vehicle add constraint fk foreign key(fueltypeid) references fueltype(fueltypeid);
+Query OK, 0 rows affected (0.14 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> use sunlifedb
+Database changed
+mysql> show tables;
++---------------------+
+| Tables_in_sunlifedb |
++---------------------+
+| drinkorder          |
+| drinks              |
+| drinktype           |
+| employee            |
++---------------------+
+4 rows in set (0.00 sec)
+
+mysql> desc drinkorder;
++---------+------+------+-----+---------+----------------+
+| Field   | Type | Null | Key | Default | Extra          |
++---------+------+------+-----+---------+----------------+
+| dcid    | int  | NO   | PRI | NULL    | auto_increment |
+| ddate   | date | YES  |     | NULL    |                |
+| qty     | int  | YES  |     | NULL    |                |
+| drinkid | int  | YES  | MUL | NULL    |                |
++---------+------+------+-----+---------+----------------+
+4 rows in set (0.01 sec)
+
+mysql> use vehicledb
+Database changed
+mysql> create table vehiclerental(
+    -> vehiclerentalid int,
+    -> todate date,
+    -> fromdate date,
+    -> vehicletypeid int,
+    -> regno varchar(20),
+    -> primary key(vehiclerentalid),
+    -> foreign key(vehicletypeid) references vehicletype(vehicletypeid),
+    -> foregin key(regno) references vehicle(regno));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'key(regno) references vehicle(regno))' at line 9
+mysql> create table vehiclerental(
+    -> vehiclerentalid int,
+    -> todate date,
+    -> fromdate date,
+    -> vehicletypeid int,
+    -> regno varchar(20),
+    -> primary key(vehiclerentalid),
+    -> foreign key(vehicletypeid) references vehicletype(vehicletypeid),
+    -> foreign key(regno) references vehicle(regno));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> show tables;
++---------------------+
+| Tables_in_vehicledb |
++---------------------+
+| fueltype            |
+| vehicle             |
+| vehiclerental       |
+| vehicletype         |
++---------------------+
+4 rows in set (0.00 sec)
+
+mysql> desc fueltype;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| fueltypeid | int         | NO   | PRI | NULL    |       |
+| fuelname   | varchar(20) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> desc vehicle;
++---------------+---------------+------+-----+---------+-------+
+| Field         | Type          | Null | Key | Default | Extra |
++---------------+---------------+------+-----+---------+-------+
+| regno         | varchar(20)   | NO   | PRI | NULL    |       |
+| manufacturer  | varchar(30)   | YES  |     | NULL    |       |
+| dailyrent     | decimal(10,0) | YES  |     | NULL    |       |
+| mileage       | decimal(10,0) | YES  |     | NULL    |       |
+| description   | varchar(200)  | YES  |     | NULL    |       |
+| vehicletypeid | int           | YES  | MUL | NULL    |       |
+| fueltypeid    | int           | YES  | MUL | NULL    |       |
++---------------+---------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> desc vehiclerental;
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| vehiclerentalid | int         | NO   | PRI | NULL    |       |
+| todate          | date        | YES  |     | NULL    |       |
+| fromdate        | date        | YES  |     | NULL    |       |
+| vehicletypeid   | int         | YES  | MUL | NULL    |       |
+| regno           | varchar(20) | YES  | MUL | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> desc vehicletype;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| vehicletypeid | int         | NO   | PRI | NULL    |       |
+| vehiclename   | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> alter table vehiclerental add column customername varchar(50);
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table vehiclerental modify column vehiclerentalid int auto_increment;
+Query OK, 0 rows affected (0.16 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc vehiclerental;
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| vehiclerentalid | int         | NO   | PRI | NULL    | auto_increment |
+| todate          | date        | YES  |     | NULL    |                |
+| fromdate        | date        | YES  |     | NULL    |                |
+| vehicletypeid   | int         | YES  | MUL | NULL    |                |
+| regno           | varchar(20) | YES  | MUL | NULL    |                |
+| customername    | varchar(50) | YES  |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> insert into vehicletype values(1,'truck');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into vehicletype values(2,'car');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into vehicletype values(3,'bus');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into fueltype values(1,'petrol');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into fueltype values(2,'diesel');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into fueltype values(3,'LPG');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> desc vehicle;
++---------------+---------------+------+-----+---------+-------+
+| Field         | Type          | Null | Key | Default | Extra |
++---------------+---------------+------+-----+---------+-------+
+| regno         | varchar(20)   | NO   | PRI | NULL    |       |
+| manufacturer  | varchar(30)   | YES  |     | NULL    |       |
+| dailyrent     | decimal(10,0) | YES  |     | NULL    |       |
+| mileage       | decimal(10,0) | YES  |     | NULL    |       |
+| description   | varchar(200)  | YES  |     | NULL    |       |
+| vehicletypeid | int           | YES  | MUL | NULL    |       |
+| fueltypeid    | int           | YES  | MUL | NULL    |       |
++---------------+---------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> insert into vehicle values('PB10DJ533','TATA',1000,22.5,'a shining white car',2,2),
+    -> ('JH11J9532','KIA',3000,24,'looks classy on the road, and it grabs attention',2,1);
+Query OK, 2 rows affected, 1 warning (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 1
+
+mysql> insert into vehicle values('PB10DJ533','TATA',1000,6.5,'an old truck',1,3);
+ERROR 1062 (23000): Duplicate entry 'PB10DJ533' for key 'vehicle.PRIMARY'
+mysql> insert into vehicle values('PB19SJ766','TATA',1000,6.5,'an old truck',1,3);
+Query OK, 1 row affected, 1 warning (0.01 sec)
+
+mysql> desc vehicletype;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| vehicletypeid | int         | NO   | PRI | NULL    |       |
+| vehiclename   | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> insert into vehiclerental values('2023-10-30','2023-10-10',2,'PB10DJ533','Jessica Reehal');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> desc vehiclerental;
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| vehiclerentalid | int         | NO   | PRI | NULL    | auto_increment |
+| todate          | date        | YES  |     | NULL    |                |
+| fromdate        | date        | YES  |     | NULL    |                |
+| vehicletypeid   | int         | YES  | MUL | NULL    |                |
+| regno           | varchar(20) | YES  | MUL | NULL    |                |
+| customername    | varchar(50) | YES  |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> insert into vehiclerental(todate,fromdate,vehicletypeid,regno,customername) values('2023-10-30','2023-10-10',2,'PB10DJ533','Jessica Reehal');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into vehiclerental(todate,fromdate,vehicletypeid,regno,customername) values('2023-10-20','2023-10-03',2,'JH11J9532','Ankit Kumar');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into vehiclerental(todate,fromdate,vehicletypeid,regno,customername) values('2023-10-19','2023-10-02',2,'PB19SJ766','Itashi');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into vehiclerental(todate,fromdate,vehicletypeid,regno,customername) values('2023-10-19','2023-10-02',2,'PB19SJ766','Itashi;
+    '> ;
+    '> ^C
+mysql>
+mysql>
+mysql> update table vehiclerental set vehicletypeid=1 where vehiclerentalid=3;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table vehiclerental set vehicletypeid=1 where vehiclerentalid=3' at line 1
+mysql> update table vehiclerental set vehicletypeid=1 where regno=^C
+mysql> update table vehiclerental set vehicletypeid=1 where regno='PB19SJ766';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table vehiclerental set vehicletypeid=1 where regno='PB19SJ766'' at line 1
+mysql> select * from vehiclerental;
++-----------------+------------+------------+---------------+-----------+----------------+
+| vehiclerentalid | todate     | fromdate   | vehicletypeid | regno     | customername   |
++-----------------+------------+------------+---------------+-----------+----------------+
+|               1 | 2023-10-30 | 2023-10-10 |             2 | PB10DJ533 | Jessica Reehal |
+|               2 | 2023-10-20 | 2023-10-03 |             2 | JH11J9532 | Ankit Kumar    |
+|               3 | 2023-10-19 | 2023-10-02 |             2 | PB19SJ766 | Itashi         |
++-----------------+------------+------------+---------------+-----------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> delete from vehiclerental where vehiclerentalid=3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into vehiclerental(todate,fromdate,vehicletypeid,regno,customername) values('2023-10-19','2023-10-02',1,'PB19SJ766','Itashi;
+    '> ^C
+mysql> insert into vehiclerental(todate,fromdate,vehicletypeid,regno,customername) values('2023-10-19','2023-10-02',1,'PB19SJ766','Itashi');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from vehiclerental;
++-----------------+------------+------------+---------------+-----------+----------------+
+| vehiclerentalid | todate     | fromdate   | vehicletypeid | regno     | customername   |
++-----------------+------------+------------+---------------+-----------+----------------+
+|               1 | 2023-10-30 | 2023-10-10 |             2 | PB10DJ533 | Jessica Reehal |
+|               2 | 2023-10-20 | 2023-10-03 |             2 | JH11J9532 | Ankit Kumar    |
+|               4 | 2023-10-19 | 2023-10-02 |             1 | PB19SJ766 | Itashi         |
++-----------------+------------+------------+---------------+-----------+----------------+
+3 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> select vt.vehiclename,count(v.regno) from vehicle v left join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by vt.vehiclename;
++-------------+----------------+
+| vehiclename | count(v.regno) |
++-------------+----------------+
+| truck       |              1 |
+| car         |              2 |
++-------------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select vt.vehiclename,count(v.regno) from vehicle v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by vt.vehiclename;
++-------------+----------------+
+| vehiclename | count(v.regno) |
++-------------+----------------+
+| truck       |              1 |
+| car         |              2 |
++-------------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select vt.vehiclename,count(v.regno) from vehicle v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by v.regno;
++-------------+----------------+
+| vehiclename | count(v.regno) |
++-------------+----------------+
+| car         |              1 |
+| car         |              1 |
+| truck       |              1 |
++-------------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> desc vehiclerental;
+ERROR 2013 (HY000): Lost connection to MySQL server during query
+No connection. Trying to reconnect...
+Connection id:    45
+Current database: vehicledb
+
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| vehiclerentalid | int         | NO   | PRI | NULL    | auto_increment |
+| todate          | date        | YES  |     | NULL    |                |
+| fromdate        | date        | YES  |     | NULL    |                |
+| vehicletypeid   | int         | YES  | MUL | NULL    |                |
+| regno           | varchar(20) | YES  | MUL | NULL    |                |
+| customername    | varchar(50) | YES  |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.04 sec)
+
+mysql> select vt.vehiclename,count(v.regno) from vehiclerental v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by v.regno;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'vehicledb.vt.vehiclename' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid group by vr.vehicletypeid;
++-------------+---------------------------+
+| vehiclename | count(vr.vehiclerentalid) |
++-------------+---------------------------+
+| truck       |                         1 |
+| car         |                         2 |
++-------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into vehiclerental(todate,fromdate,vehicletypeid,regno,customername) values('2023-10-20','2023-10-06',1,'PB19SJ766','Samrat');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid group by vr.vehicletypeid;
++-------------+---------------------------+
+| vehiclename | count(vr.vehiclerentalid) |
++-------------+---------------------------+
+| truck       |                         2 |
+| car         |                         2 |
++-------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql> select vt.vehiclename,count(v.regno) from vehicle v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by v.regno;
++-------------+----------------+
+| vehiclename | count(v.regno) |
++-------------+----------------+
+| car         |              1 |
+| car         |              1 |
+| truck       |              1 |
++-------------+----------------+
+3 rows in set (0.00 sec)
+
+mysql>  select vt.vehiclename,count(v.regno) from vehicle v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by vt.vehiclename;
++-------------+----------------+
+| vehiclename | count(v.regno) |
++-------------+----------------+
+| truck       |              1 |
+| car         |              2 |
++-------------+----------------+
+2 rows in set (0.00 sec)
+
+mysql>  select vt.vehiclename,count(v.regno) as vehiclecount, count(vr.vehiclerentalid) as vehiclerentalcount from vehicle v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid inner join vehiclerental vr on
+    -> on vr.vehicletypeid=vt.vehicletypeid group by vt.vehiclename;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'on vr.vehicletypeid=vt.vehicletypeid group by vt.vehiclename' at line 2
+mysql>  select vt.vehiclename,count(v.regno) as vehiclecount, count(vr.vehiclerentalid) as vehiclerentalcount from vehicle v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by vt.vehiclename inner join vehiclerental vr on vr.vehicletypeid=vt.vehicletypeid group by vr.vehicletypeid;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'inner join vehiclerental vr on vr.vehicletypeid=vt.vehicletypeid group by vr.veh' at line 1
+mysql>  select vt.vehiclename,count(v.regno) from vehicle v inner join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by vt.vehiclename;
++-------------+----------------+
+| vehiclename | count(v.regno) |
++-------------+----------------+
+| truck       |              1 |
+| car         |              2 |
++-------------+----------------+
+2 rows in set (0.00 sec)
+
+mysql>  select vt.vehiclename,count(v.regno),count(vr.vehiclerentalid) from vehicle v inner join vehicletype vt inner join vehiclerental vr on vt.vehicletypeid=v.vehicletypeid and vr.vehicletypeid=vt.vehicletypeid group by vt.vehiclename,vr.vehicletypeid;
++-------------+----------------+---------------------------+
+| vehiclename | count(v.regno) | count(vr.vehiclerentalid) |
++-------------+----------------+---------------------------+
+| truck       |              2 |                         2 |
+| car         |              4 |                         4 |
++-------------+----------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql>  select vt.vehiclename,count(v.regno),count(vr.vehiclerentalid) from vehicletype vt inner join vehicle v on vt.vehicletypeid=v.vehicletypeid inner join vehiclerental vr on vt.vehicletypeid=vr.vehicletypeid group by vt.vehiclename,vr.vehicletypeid;
++-------------+----------------+---------------------------+
+| vehiclename | count(v.regno) | count(vr.vehiclerentalid) |
++-------------+----------------+---------------------------+
+| truck       |              2 |                         2 |
+| car         |              4 |                         4 |
++-------------+----------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql>  select vt.vehiclename,count(v.regno),count(vr.vehiclerentalid) from vehicletype vt right join vehicle v on vt.vehicletypeid=v.vehicletypeid right join vehiclerental vr on vt.vehicletypeid=vr.vehicletypeid group by vt.vehiclename,vr.vehicletypeid;
++-------------+----------------+---------------------------+
+| vehiclename | count(v.regno) | count(vr.vehiclerentalid) |
++-------------+----------------+---------------------------+
+| truck       |              2 |                         2 |
+| car         |              4 |                         4 |
++-------------+----------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql>  select vt.vehiclename,count(v.regno),count(vr.vehiclerentalid) from vehicletype vt inner join vehicle v on vt.vehicletypeid=v.vehicletypeid group by vt.vehiclename inner join vehiclerental vr on vt.vehicletypeid=vr.vehicletypeid group by vr.vehicletypeid;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'inner join vehiclerental vr on vt.vehicletypeid=vr.vehicletypeid group by vr.veh' at line 1
+mysql> desc vehicle;
++---------------+---------------+------+-----+---------+-------+
+| Field         | Type          | Null | Key | Default | Extra |
++---------------+---------------+------+-----+---------+-------+
+| regno         | varchar(20)   | NO   | PRI | NULL    |       |
+| manufacturer  | varchar(30)   | YES  |     | NULL    |       |
+| dailyrent     | decimal(10,0) | YES  |     | NULL    |       |
+| mileage       | decimal(10,0) | YES  |     | NULL    |       |
+| description   | varchar(200)  | YES  |     | NULL    |       |
+| vehicletypeid | int           | YES  | MUL | NULL    |       |
+| fueltypeid    | int           | YES  | MUL | NULL    |       |
++---------------+---------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> select sum(v.dailyrent*DATE_DIFF(vr.todate,vr.fromdate,D) as total_rent from vehicle v inner join vehiclerental vr group by vr.vehicletypeid;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'as total_rent from vehicle v inner join vehiclerental vr group by vr.vehicletype' at line 1
+mysql> select sum(v.dailyrent*DATE_DIFF(vr.todate,vr.fromdate,D) as total_rent from vehicle v inner join vehiclerental vr on v.vehicletypeid=vr.vehicletypeid group by vr.vehicletypeid;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'as total_rent from vehicle v inner join vehiclerental vr on v.vehicletypeid=vr.v' at line 1
+mysql> select sum(v.dailyrent*DATE_DIFF(vr.todate,vr.fromdate,D)) as total_rent from vehicle v inner join vehiclerental vr on v.vehicletypeid=vr.vehicletypeid group by vr.vehicletypeid;
+ERROR 1305 (42000): FUNCTION vehicledb.DATE_DIFF does not exist
+mysql> select sum(v.dailyrent*DATEDIF(vr.todate,vr.fromdate,D)) as total_rent from vehicle v inner join vehiclerental vr on v.vehicletypeid=vr.vehicletypeid group by vr.vehicletypeid;
+ERROR 1305 (42000): FUNCTION vehicledb.DATEDIF does not exist
+mysql> select sum(v.dailyrent*DATEDIFF(vr.todate,vr.fromdate)) as total_rent from vehicle v inner join vehiclerental vr on v.vehicletypeid=vr.vehicletypeid group by vr.vehicletypeid;
++------------+
+| total_rent |
++------------+
+|     148000 |
+|      31000 |
++------------+
+2 rows in set (0.00 sec)
+
+mysql> select vt.vehiclename,sum(v.dailyrent*DATEDIFF(vr.todate,vr.fromdate)) as total_rent from vehicle v inner join vehiclerental vr on v.vehicletypeid=vr.vehicletypeid left join vehicletype vt on vt.vehicletypeid=v.vehicletypeid group by vr.vehicletypeid;
++-------------+------------+
+| vehiclename | total_rent |
++-------------+------------+
+| car         |     148000 |
+| truck       |      31000 |
++-------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> desc vehicle;
+ERROR 2013 (HY000): Lost connection to MySQL server during query
+No connection. Trying to reconnect...
+Connection id:    46
+Current database: vehicledb
+
++---------------+---------------+------+-----+---------+-------+
+| Field         | Type          | Null | Key | Default | Extra |
++---------------+---------------+------+-----+---------+-------+
+| regno         | varchar(20)   | NO   | PRI | NULL    |       |
+| manufacturer  | varchar(30)   | YES  |     | NULL    |       |
+| dailyrent     | decimal(10,0) | YES  |     | NULL    |       |
+| mileage       | decimal(10,0) | YES  |     | NULL    |       |
+| description   | varchar(200)  | YES  |     | NULL    |       |
+| vehicletypeid | int           | YES  | MUL | NULL    |       |
+| fueltypeid    | int           | YES  | MUL | NULL    |       |
++---------------+---------------+------+-----+---------+-------+
+7 rows in set (0.03 sec)
+
+mysql> desc vehiclerental;
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| vehiclerentalid | int         | NO   | PRI | NULL    | auto_increment |
+| todate          | date        | YES  |     | NULL    |                |
+| fromdate        | date        | YES  |     | NULL    |                |
+| vehicletypeid   | int         | YES  | MUL | NULL    |                |
+| regno           | varchar(20) | YES  | MUL | NULL    |                |
+| customername    | varchar(50) | YES  |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.01 sec)
+
+mysql>  select vt.vehiclename,count(v.regno),count(vr.vehiclerentalid) from vehicletype vt inner join vehicle v on vt.vehicletypeid=v.vehicletypeid group by vt.vehiclename inner join vehiclerental vr on vt.vehicletypeid=vr.vehicletypeid group by vr.vehicletypeid;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'inner join vehiclerental vr on vt.vehicletypeid=vr.vehicletypeid group by vr.veh' at line 1
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid group by vr.vehicletypeid where vr.todate between 2023-09-10 and 2023-10-31;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where vr.todate between 2023-09-10 and 2023-10-31' at line 1
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid group by vr.vehicletypeid where vr.todate between 2023/09/10 and 2023/10/31;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where vr.todate between 2023/09/10 and 2023/10/31' at line 1
+mysql> select * from vehiclerental;
++-----------------+------------+------------+---------------+-----------+----------------+
+| vehiclerentalid | todate     | fromdate   | vehicletypeid | regno     | customername   |
++-----------------+------------+------------+---------------+-----------+----------------+
+|               1 | 2023-10-30 | 2023-10-10 |             2 | PB10DJ533 | Jessica Reehal |
+|               2 | 2023-10-20 | 2023-10-03 |             2 | JH11J9532 | Ankit Kumar    |
+|               4 | 2023-10-19 | 2023-10-02 |             1 | PB19SJ766 | Itashi         |
+|               5 | 2023-10-20 | 2023-10-06 |             1 | PB19SJ766 | Samrat         |
++-----------------+------------+------------+---------------+-----------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid where vr.todate between 2023-09-10 and 2023-10-31 group by vr.vehicletypeid;
+Empty set, 2 warnings (0.00 sec)
+
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid where vr.todate between 2023-10-01 and 2023-10-31 group by vr.vehicletypeid;
+Empty set, 2 warnings (0.00 sec)
+
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid where vr.todate between 2023/10/01 and 2023/10/31 group by vr.vehicletypeid;
+Empty set, 2 warnings (0.00 sec)
+
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid where vr.todate between DATE(2023/10/01) and DATE(2023/10/31) group by vr.vehicletypeid;
+Empty set, 1 warning (0.00 sec)
+
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid where vr.todate between '2023-10-01' and '2023-10-31' group by vr.vehicletypeid;
++-------------+---------------------------+
+| vehiclename | count(vr.vehiclerentalid) |
++-------------+---------------------------+
+| car         |                         2 |
+| truck       |                         2 |
++-------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql> select vt.vehiclename,count(vr.vehiclerentalid) from vehiclerental vr inner join vehicletype vt on vr.vehicletypeid=vt.vehicletypeid where vr.todate between '2023-10-01' and '2023-10-31' group by vr.vehicletypeid;
++-------------+---------------------------+
+| vehiclename | count(vr.vehiclerentalid) |
++-------------+---------------------------+
+| car         |                         2 |
+| truck       |                         2 |
++-------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from vehicletype;
++---------------+-------------+
+| vehicletypeid | vehiclename |
++---------------+-------------+
+|             1 | truck       |
+|             2 | car         |
+|             3 | bus         |
++---------------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> desc vehicletype
+    -> ;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| vehicletypeid | int         | NO   | PRI | NULL    |       |
+| vehiclename   | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sunlifedb          |
+| sys                |
+| vehicledb          |
+| world              |
++--------------------+
+8 rows in set (0.00 sec)
+
+mysql> select * from vehicle;
++-----------+--------------+-----------+---------+--------------------------------------------------+---------------+------------+
+| regno     | manufacturer | dailyrent | mileage | description                                      | vehicletypeid | fueltypeid |
++-----------+--------------+-----------+---------+--------------------------------------------------+---------------+------------+
+| 3fdf      | tata         |        56 |      23 | desc                                             |             1 |          1 |
+| JH11J9532 | KIA          |      3000 |      24 | looks classy on the road, and it grabs attention |             2 |          1 |
+| PB10DJ533 | TATA         |      1000 |      23 | a shining white car                              |             2 |          2 |
+| PB19SJ766 | TATA         |      1000 |       7 | an old truck                                     |             1 |          3 |
++-----------+--------------+-----------+---------+--------------------------------------------------+---------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> desc vehiclerental;
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| vehiclerentalid | int         | NO   | PRI | NULL    | auto_increment |
+| todate          | date        | YES  |     | NULL    |                |
+| fromdate        | date        | YES  |     | NULL    |                |
+| vehicletypeid   | int         | YES  | MUL | NULL    |                |
+| regno           | varchar(20) | YES  | MUL | NULL    |                |
+| customername    | varchar(50) | YES  |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.01 sec)
+
+mysql> select * from vehicle;
++-----------+--------------+-----------+---------+--------------------------------------------------+---------------+------------+
+| regno     | manufacturer | dailyrent | mileage | description                                      | vehicletypeid | fueltypeid |
++-----------+--------------+-----------+---------+--------------------------------------------------+---------------+------------+
+| 3fdf      | tata         |        56 |      23 | desc                                             |             1 |          1 |
+| 5ggg      | tata         |       500 |      14 | good                                             |             2 |          3 |
+| JH11J9532 | KIA          |      3000 |      24 | looks classy on the road, and it grabs attention |             2 |          1 |
+| PB10DJ533 | TATA         |      1000 |      23 | a shining white car                              |             2 |          2 |
+| PB19SJ766 | TATA         |      1000 |       7 | an old truck                                     |             1 |          3 |
++-----------+--------------+-----------+---------+--------------------------------------------------+---------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from vehiclerental;
++-----------------+------------+------------+---------------+-----------+----------------+
+| vehiclerentalid | todate     | fromdate   | vehicletypeid | regno     | customername   |
++-----------------+------------+------------+---------------+-----------+----------------+
+|               1 | 2023-10-30 | 2023-10-10 |             2 | PB10DJ533 | Jessica Reehal |
+|               2 | 2023-10-20 | 2023-10-03 |             2 | JH11J9532 | Ankit Kumar    |
+|               4 | 2023-10-19 | 2023-10-02 |             1 | PB19SJ766 | Itashi         |
+|               5 | 2023-10-20 | 2023-10-06 |             1 | PB19SJ766 | Samrat         |
++-----------------+------------+------------+---------------+-----------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from vehiclerental;
++-----------------+------------+------------+---------------+-----------+----------------+
+| vehiclerentalid | todate     | fromdate   | vehicletypeid | regno     | customername   |
++-----------------+------------+------------+---------------+-----------+----------------+
+|               1 | 2023-10-30 | 2023-10-10 |             2 | PB10DJ533 | Jessica Reehal |
+|               2 | 2023-10-20 | 2023-10-03 |             2 | JH11J9532 | Ankit Kumar    |
+|               4 | 2023-10-19 | 2023-10-02 |             1 | PB19SJ766 | Itashi         |
+|               5 | 2023-10-20 | 2023-10-06 |             1 | PB19SJ766 | Samrat         |
+|              12 | 2023-06-30 | 2023-06-02 |             2 | JH11J9532 | Jessica        |
++-----------------+------------+------------+---------------+-----------+----------------+
+5 rows in set (0.00 sec)
+
+mysql>
